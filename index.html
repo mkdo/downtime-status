@@ -106,14 +106,14 @@
 		height: 10px;
 		border-radius: 50%;
 		flex-shrink: 0;
-		background: var(--amber);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 20%, transparent);
+		background: var(--teal);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--teal) 20%, transparent);
 		animation: pulse 2s ease-in-out infinite;
 	}
 
 	@keyframes pulse {
-		0%, 100% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 20%, transparent); }
-		50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--amber) 8%, transparent); }
+		0%, 100% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--teal) 20%, transparent); }
+		50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--teal) 8%, transparent); }
 	}
 
 	.card-header-text {
@@ -141,8 +141,8 @@
 		text-transform: uppercase;
 		padding: 3px 8px;
 		border-radius: 4px;
-		background: color-mix(in srgb, var(--amber) 15%, transparent);
-		color: var(--amber);
+		background: color-mix(in srgb, var(--teal) 15%, transparent);
+		color: var(--teal);
 		flex-shrink: 0;
 	}
 
@@ -165,12 +165,12 @@
 		align-items: center;
 		gap: 10px;
 		padding: 12px 16px;
-		background: color-mix(in srgb, var(--amber) 8%, transparent);
-		border: 1px solid color-mix(in srgb, var(--amber) 20%, transparent);
+		background: color-mix(in srgb, var(--teal) 8%, transparent);
+		border: 1px solid color-mix(in srgb, var(--teal) 20%, transparent);
 		border-radius: 8px;
 		font-size: 13px;
 		font-weight: 500;
-		color: var(--amber);
+		color: var(--teal);
 	}
 
 	/* Provider section */
@@ -224,7 +224,7 @@
 		font-weight: 600;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
-		color: var(--amber);
+		color: var(--teal);
 		flex-shrink: 0;
 	}
 
@@ -311,12 +311,14 @@
 			<p class="summary">
 				We are aware of an ongoing outage affecting sites hosted on WPEngine. The root cause has been identified as an incident within Google Cloud Platform's London region, which WPEngine's European infrastructure runs on. This is entirely outside of our control.
 				<br><br>
-				<strong>Update:</strong> Google seem to have partially restored the platform. We're monitoring continuously for the incident's end or any further updates.
+				<s><strong>Update:</strong> Google seem to have partially restored the platform. We're monitoring continuously for the incident's end or any further updates.</s>
+				<br><br>
+				<strong>Resolved:</strong> Any issues should now be resolved and sites should now be up, as per usual.
 			</p>
 
 			<div class="region-row">
 				<span>⬤</span>
-				Europe (GCP London) — Degraded
+				Europe (GCP London) — Restored
 			</div>
 
 			<div class="providers">
@@ -324,7 +326,7 @@
 				<div class="provider-links">
 					<a class="provider-link" href="https://wpenginestatus.com/incidents/968541" target="_blank" rel="noopener">
 						<span class="provider-link-name">WPEngine — Incident #968541</span>
-						<span class="provider-link-status">Investigating</span>
+						<span class="provider-link-status">Resolved</span>
 						<span class="provider-link-arrow">↗</span>
 					</a>
 					<a class="provider-link" href="https://status.cloud.google.com/incidents/Xs2XTHzAVC9YnafnPyzj" target="_blank" rel="noopener">
