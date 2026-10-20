@@ -74,12 +74,6 @@
 		gap: 12px;
 	}
 
-	.logo-mark {
-		width: 36px;
-		height: 36px;
-		flex-shrink: 0;
-	}
-
 	.logo-text {
 		font-size: 26px;
 		font-weight: 700;
@@ -179,87 +173,6 @@
 		color: var(--red);
 	}
 
-	.region-icon {
-		font-size: 15px;
-		flex-shrink: 0;
-	}
-
-	/* Timeline */
-	.timeline {
-		display: flex;
-		flex-direction: column;
-		gap: 0;
-	}
-
-	.timeline-item {
-		display: flex;
-		gap: 16px;
-		padding-bottom: 20px;
-		position: relative;
-	}
-
-	.timeline-item:last-child {
-		padding-bottom: 0;
-	}
-
-	.timeline-item::before {
-		content: '';
-		position: absolute;
-		left: 5px;
-		top: 14px;
-		bottom: 0;
-		width: 1px;
-		background: var(--border);
-	}
-
-	.timeline-item:last-child::before {
-		display: none;
-	}
-
-	.timeline-dot {
-		width: 11px;
-		height: 11px;
-		border-radius: 50%;
-		background: var(--fg-muted);
-		flex-shrink: 0;
-		margin-top: 5px;
-	}
-
-	.timeline-dot.active {
-		background: var(--amber);
-	}
-
-	.timeline-content {
-		flex: 1;
-		min-width: 0;
-	}
-
-	.timeline-label {
-		font-size: 12px;
-		font-weight: 600;
-		letter-spacing: 0.05em;
-		text-transform: uppercase;
-		color: var(--fg-muted);
-		margin-bottom: 2px;
-	}
-
-	.timeline-label.active {
-		color: var(--amber);
-	}
-
-	.timeline-time {
-		font-size: 12px;
-		color: var(--fg-muted);
-		margin-bottom: 6px;
-		font-variant-numeric: tabular-nums;
-	}
-
-	.timeline-text {
-		font-size: 14px;
-		color: var(--fg);
-		line-height: 1.55;
-	}
-
 	/* Provider section */
 	.providers {
 		display: flex;
@@ -320,6 +233,41 @@
 		flex-shrink: 0;
 	}
 
+	/* GCP live block */
+	.gcp-live {
+		padding: 14px 16px;
+		background: var(--bg);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.gcp-live-label {
+		font-size: 11px;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--fg-muted);
+	}
+
+	.gcp-live-text {
+		font-size: 13px;
+		color: var(--fg);
+		line-height: 1.55;
+	}
+
+	.gcp-live-text > br:first-of-type {
+		display: none;
+	}
+
+	.gcp-live-time {
+		font-size: 11px;
+		color: var(--fg-muted);
+		font-variant-numeric: tabular-nums;
+	}
+
 	/* Footer */
 	.footer {
 		font-size: 13px;
@@ -365,7 +313,7 @@
 			</p>
 
 			<div class="region-row">
-				<span class="region-icon">⬤</span>
+				<span>⬤</span>
 				Europe (GCP London) — Down
 			</div>
 
@@ -379,13 +327,21 @@
 					</a>
 					<a class="provider-link" href="https://status.cloud.google.com/incidents/Xs2XTHzAVC9YnafnPyzj" target="_blank" rel="noopener">
 						<span class="provider-link-name">Google Cloud Platform — London region</span>
-						<span class="provider-link-status">Active</span>
+						<span class="provider-link-status" id="gcp-badge">Active</span>
 						<span class="provider-link-arrow">↗</span>
 					</a>
 				</div>
 			</div>
 
-			<p class="updated">Last updated: 20 October 2026, ~10:18am (BST)</p>
+			<div class="providers">
+				<div class="provider-label">Google Cloud — Latest update</div>
+				<div class="gcp-live">
+					<div class="gcp-live-text" id="gcp-live-text">Fetching...</div>
+					<div class="gcp-live-time" id="gcp-live-time"></div>
+				</div>
+			</div>
+
+			<p class="updated">Page last updated: 20 October 2026, ~11:47am (BST)</p>
 		</div>
 	</div>
 
@@ -394,5 +350,61 @@
 		We'll update this page as the situation develops.
 	</footer>
 </div>
+
+<script>
+	(async () => {
+		// This is the incident ID. Nothing secret. Nice try.
+		const GCP_ID = "Xs2XTHzAVC9YnafnPyzj";
+		const TIME_STRING_FMT = {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+			timeZoneName: 'short',
+		};
+
+		const $elements = {
+			text: document.getElementById("gcp-live-text"),
+			time: document.getElementById("gcp-live-time"),
+			badge: document.getElementById("gcp-badge"),
+		};
+
+		try {
+			const response = await fetch("https://status.cloud.google.com/incidents.json");
+
+			if (! response.ok) {
+				throw new Error(response.status);
+			}
+
+			const incidents = await response.json();
+			const incident = incidents.find((target) => target.id === GCP_ID);
+
+			if (! incident) {
+				throw new Error("Unable to find incident. May have been resolved.");
+			}
+
+			const latest = incident?.most_recent_update;
+			const time = new Date(latest?.when);
+
+			if (! latest || ! time) {
+				throw new Error("Unable to parse incident. See link above.");
+			}
+			
+			$elements.time.textContent = time.toLocaleString("en-GB", TIME_STRING_FMT);
+			$elements.text.innerHTML = latest.text.replace(/\n+/g, '<br>')
+				.replace(/\*\*([^*]+)\*\*/g, '<br><strong>$1</strong>')
+			    .replace(/\n+/g, ' ')
+			    .trim();
+
+			if (!! incident?.end) {
+				$elements.badge.textContent = "Resolved";
+				$elements.badge.style.color = "var(--teal)";
+			}
+		} catch (e) {
+			$elements.text.textContent = "Unable to fetch live status. See link above.";
+		}
+	})();
+</script>
 
 </body></html>
